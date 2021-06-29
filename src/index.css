@@ -1,0 +1,22 @@
+.board-row {
+  display: flex;
+  flex-direction: row;
+}
+
+.cell {
+  border: 1px solid gray;
+  margin: 1px;
+  width: 30px;
+  height: 30px;
+}
+
+.cell-empty {
+  background-color: lightgray;
+}
+.cell-snake {
+  background-color: chocolate;
+}
+
+.cell-apple {
+  background-color: red;
+}
