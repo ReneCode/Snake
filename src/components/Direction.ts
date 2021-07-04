@@ -1,5 +1,36 @@
 export type DirectionType = "up" | "right" | "down" | "left";
 
+export const directionTurn = (
+  direction: DirectionType,
+  turn: "left" | "right"
+) => {
+  switch (turn) {
+    case "right":
+      switch (direction) {
+        case "up":
+          return "right";
+        case "right":
+          return "down";
+        case "down":
+          return "left";
+        case "left":
+          return "up";
+      }
+      break;
+    case "left":
+      switch (direction) {
+        case "up":
+          return "left";
+        case "left":
+          return "down";
+        case "down":
+          return "right";
+        case "right":
+          return "up";
+      }
+  }
+};
+
 export class Direction {
   private value: DirectionType;
 
@@ -22,31 +53,5 @@ export class Direction {
     }
   }
 
-  public turn(d: "right" | "left") {
-    switch (d) {
-      case "right":
-        switch (this.value) {
-          case "up":
-            return new Direction("right");
-          case "right":
-            return new Direction("down");
-          case "down":
-            return new Direction("left");
-          case "left":
-            return new Direction("up");
-        }
-        break;
-      case "left":
-        switch (this.value) {
-          case "up":
-            return new Direction("left");
-          case "left":
-            return new Direction("down");
-          case "down":
-            return new Direction("right");
-          case "right":
-            return new Direction("up");
-        }
-    }
-  }
+  public turn(d: "right" | "left") {}
 }

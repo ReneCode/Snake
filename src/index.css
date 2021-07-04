@@ -4,7 +4,6 @@
 }
 
 .cell {
-  border: 1px solid gray;
   margin: 1px;
   width: 30px;
   height: 30px;
@@ -15,6 +14,7 @@
 }
 .cell-snake {
   background-color: chocolate;
+  border-radius: 5px;
 }
 
 .cell-apple {

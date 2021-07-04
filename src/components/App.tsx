@@ -1,37 +1,30 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Board from "./Board";
-import { Direction } from "./Direction";
-import { Snake } from "./Snake";
+import { directionTurn, DirectionType } from "./Direction";
+import { snakeIsHere, snakeMove, SnakeType } from "./Snake";
+import { useInterval } from "./useInterval";
 
 const App = () => {
-  const TIME_INTERVAL = 1000;
-  const MAX_ROW = 10;
-  const MAX_COLUMN = 15;
+  const TIME_INTERVAL = 200;
+  const MAX_ROW = 20;
+  const MAX_COLUMN = 25;
   const CELL_EMPTY = 1;
   const CELL_SNAKE = 2;
   const CELL_APPLE = 3;
 
   const [cells, setCells] = useState<number[][]>([]);
 
-  const [snake, setSnake] = useState(new Snake([{ r: 0, c: 0 }]));
-  // const [snakeDirection, setSnakeDirection] = useState({ r: 0, c: 1 });
-  const [direction, setDirection] = useState(() => {
-    console.log("-----");
-    return new Direction("right");
-  });
-
+  const [snake, setSnake] = useState<SnakeType>([{ c: 4, r: 4 }]);
+  const [direction, setDirection] = useState<DirectionType>("right");
   const [stop, setStop] = useState(false);
 
   const updateScene = () => {
     // move Snake
-    console.log("dir:", direction);
-    const newSnake = snake.move(direction);
+    const newSnake = snakeMove(snake, direction);
     setSnake(newSnake);
 
-    setDirection(new Direction("up"));
-
     // Snake hitting border ?
-    const head = newSnake.head;
+    const head = snake[0];
     if (head.c < 0 || head.r < 0 || head.c >= MAX_COLUMN || head.r >= MAX_ROW) {
       setStop(true);
       return;
@@ -43,7 +36,7 @@ const App = () => {
       const row = [];
       for (let c = 0; c < MAX_COLUMN; c++) {
         let val = CELL_EMPTY;
-        if (newSnake.isHere({ c, r })) {
+        if (snakeIsHere(newSnake, { c, r })) {
           val = CELL_SNAKE;
         }
         row.push(val);
@@ -53,18 +46,15 @@ const App = () => {
     setCells(cells);
   };
 
-  const keyDownHandler = useCallback((event: KeyboardEvent) => {
-    console.log(event.key, direction);
+  const keyDownHandler = (event: KeyboardEvent) => {
     if (event.key === "ArrowLeft") {
       event.preventDefault();
-      setDirection(direction.turn("left"));
-    }
-    if (event.key === "ArrowRight") {
+      setDirection((direction) => directionTurn(direction, "left"));
+    } else if (event.key === "ArrowRight") {
       event.preventDefault();
-      // setDirection(direction.turn("right"));
-      setDirection(new Direction("up"));
+      setDirection((direction) => directionTurn(direction, "right"));
     }
-  }, []);
+  };
 
   useEffect(() => {
     window.addEventListener("keydown", keyDownHandler);
@@ -73,17 +63,14 @@ const App = () => {
     };
   }, []);
 
-  useEffect(() => {
-    const intervalId = setInterval(updateScene, TIME_INTERVAL);
-
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
+  useInterval(() => {
+    updateScene();
+  }, TIME_INTERVAL);
 
   return (
     <div>
       <Board cells={cells}></Board>
+      {direction}
       {stop && <h1>STOP</h1>}
     </div>
   );

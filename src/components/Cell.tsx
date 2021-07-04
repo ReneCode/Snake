@@ -10,6 +10,8 @@ const Cell = ({ type }: { type: number }) => {
     case 3:
       className = "cell-apple";
       break;
+    default:
+      throw Error("bad cell type");
   }
   className += " cell";
   return <div className={className}></div>;

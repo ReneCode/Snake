@@ -1,38 +1,42 @@
-import { Direction } from "./Direction";
+import { Direction, DirectionType } from "./Direction";
 
 type SnakePartType = { r: number; c: number };
 
-export class Snake {
-  parts: SnakePartType[] = [];
+export type SnakeType = SnakePartType[];
 
-  constructor(parts: SnakePartType[]) {
-    this.parts = [...parts];
+export const snakeMove = (snake: SnakeType, direction: DirectionType) => {
+  if (snake.length === 0) {
+    throw Error("bad snake parts");
+  }
+  const head = snake[0];
+  switch (direction) {
+    case "up":
+      head.r -= 1;
+      break;
+    case "right":
+      head.c += 1;
+      break;
+    case "down":
+      head.r += 1;
+      break;
+    case "left":
+      head.c -= 1;
+      break;
+    default:
+      throw new Error("snakeMove: bad direction");
   }
 
-  public get head() {
-    return this.parts[0];
-  }
+  const newSnake = [...snake];
+  newSnake.unshift(head);
+  newSnake.pop();
+  return newSnake;
+};
 
-  public move(direction: Direction) {
-    if (this.parts.length === 0) {
-      throw Error("bad snake parts");
+export const snakeIsHere = (snake: SnakeType, pos: SnakePartType) => {
+  for (let part of snake) {
+    if (part.c === pos.c && part.r === pos.r) {
+      return true;
     }
-    const snakeHead = this.parts[0];
-    const move = direction.getMove();
-    snakeHead.c += move.c;
-    snakeHead.r += move.r;
-    const newParts = [...this.parts];
-    newParts.unshift(snakeHead);
-    newParts.pop();
-    return new Snake(newParts);
   }
-
-  isHere(pos: { c: number; r: number }) {
-    for (let part of this.parts) {
-      if (part.c === pos.c && part.r === pos.r) {
-        return true;
-      }
-    }
-    return false;
-  }
-}
+  return false;
+};
